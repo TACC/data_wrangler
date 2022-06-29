@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#Exports REDCap fieldnames including an expanded list of ennumerated checkbox fields 
 
 from config import config
 import requests
