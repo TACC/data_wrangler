@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#Exports list of REDCap events for populating protocol/event_type tables.
 
 from config import config
 import requests
@@ -6,7 +7,7 @@ import requests
 fields = {
     'token': config['api_token'],
     'content': 'event',
-    'format': 'json',
+    'format': 'csv',
     'arms': ''
 }
 
