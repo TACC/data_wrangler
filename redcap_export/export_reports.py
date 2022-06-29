@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#report_id is number assigned to the REDCap custom report. Utilize a CSV with all report_ids to export from the project (ctrn_report_ids.csv)
 
 from config import config
 import requests
@@ -19,4 +20,4 @@ r = requests.post(config['api_url'],data=fields)
 print('HTTP Status: ' + str(r.status_code))
 print(r.text)
 
-#report_id is number assigned to the REDCap custom report. Created a CSV with all report_ids to export from CTRN Main (ctrn_report_ids.csv)
+
