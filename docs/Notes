@@ -1,9 +1,9 @@
 REDCap Export:
-Currently, 6/28/22, we have 65 REDCap instrument reports on the CTRN project to export via the REDCap API. 
-Additional REDCap projects may be added at a future time. 
-For each project, I (data administrator) want to select all or a subset of the reports to export to a secure directory at a specified day and time.
-I also want to export a copy of the REDCap data dictionary (metadata file).
+Automates the export of metadata, REDCap instrument reports, records that have been added/deleted/changed within a specified timeframe and project data via the REDCap API. 
+The code must support the ETL of multiple instruments from multiple REDCap projects into common tables. 
+For each project, I (data administrator) want to select all or a subset of the reports and project data to export to a secure directory at a specified day and time.
 I'd like to be notified when the job completes or if an issue occurs preventing job completion.
+I want the application to reestablish a connection and reissue the incomplete job based on the return code so that the full ETL can be run successfully unattended.  
 
 1) Initial validation of connections, permissions and existence of the specified project and reports.
 2) Access to create a new directory within the secure storage where the exports will be stored.
