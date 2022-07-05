@@ -19,3 +19,11 @@ REDCap Raw Data Transforms (CSVs):
 7) Set last_updated_ts to REDCap export timestamp (can be parsed from the REDCap exported file name).
 8) If language other than "en", insert value into language variable.
 
+Leveraging REDCap Metadata (aka Data Dictionary) for Schema Definition, Labels and Data Quality 
+
+REDCap has a data dictionary for every project which can be exported in multiple formats including CSV and JSON. The resulting metadata export contains the raw instrument
+and field names and their labels. It also contains the datatypes, calculations and quality control rules. The REDCap metadata export can be used to construct the table
+schemas for housing REDCap instrument data and provide a single location source for labeling views. Comparing a current metadata file against an existing one provides a
+mechanism for checking compatibility across datasets. 
+
+  
