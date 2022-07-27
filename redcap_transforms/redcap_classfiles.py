@@ -103,7 +103,7 @@ def process_data_dict(filename: str, current: dict = None) -> dict:
     else:
         ddict = current
 
-# Though not currently in use by A2CPS, we should expand the code below to include: 
+# Though lightly used by some REDCap projects, we should expand the code below to include: 
 #   text_validation, text_validation_min, text_vaidation_max, branching_logic, required, and field_annotation as these entries, when used,
 #   can translate directly into datatypes, required fields and ranges for the data schema.   
         
@@ -138,6 +138,8 @@ def process_data_dict(filename: str, current: dict = None) -> dict:
             branching_logic = row[11]
             # Required
             required = row[12]
+            # Field Annotation
+            field_annotation = row[13]
                 
             if form_name != "" and var_field_name != "":
                 if (
@@ -358,7 +360,8 @@ if __name__ == "__main__":
 
     CLASS_TEMPLATE = "redcap_tableclass.py.j2"
     INIT_TEMPLATE = "redcap_tableclasses_init.py.j2"
-    SUPPORTED_STRING_TYPES = ["text", "radio", "dropdown", "checkbox", "yesno"]
+    # SUPPORTED_STRING_TYPES = ["text", "radio", "dropdown", "checkbox", "yesno"]
+    SUPPORTED_STRING_TYPES = ["text", "radio", "dropdown", "checkbox", "yesno", "truefalse", "slider", "file"]
     SUPPORTED_FREETEXT_TYPES = ["notes"]
     parser = get_parser()
     parser.add_argument(
