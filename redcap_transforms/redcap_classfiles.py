@@ -82,7 +82,7 @@ def choices_are_yesno(choices_str: str) -> bool:
             return False
     return True
 
-
+# Added truefalse field handling; should be same as yesno field type.
 def choices_are_truefalse(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
     values = []
@@ -103,9 +103,9 @@ def process_data_dict(filename: str, current: dict = None) -> dict:
     else:
         ddict = current
 
-# Though not currently in use by A2CPS, we should expand the processing below to include: 
+# Though not currently in use by A2CPS, we should expand the code below to include: 
 #   text_validation, text_validation_min, text_vaidation_max, branching_logic, required, and field_annotation as these entries, when used,
-#   can translate directly into required fields and ranges for the data schema.   
+#   can translate directly into datatypes, required fields and ranges for the data schema.   
         
     with open(filename, "r") as csvfile:
         ddreader = csv.reader(csvfile)
@@ -122,13 +122,23 @@ def process_data_dict(filename: str, current: dict = None) -> dict:
             field_label = row[4]
             # Choices
             choices = row[5]
+            # Text Validation (integer, number, date_mdy, date_ymd, date_dmy, datetime_mdy, datetime_ymd, datetime_dmy, datetime_seconds_mdy, datetime_seconds_ymd,datetime_seconds_dmy, time, email, phone, signature)
+            text_validation = row[7]
+            # Text Validation Min
+            text_validation_min = row[8]
+            # Text Validation Max
+            text_validation_max = row[9]
             # Identifier
             identifier = row[10]
             if identifier == "y":
                 identifier = True
             else:
                 identifier = False
-
+            # Branching Logic
+            branching_logic = row[11]
+            # Required
+            required = row[12]
+                
             if form_name != "" and var_field_name != "":
                 if (
                     field_type in SUPPORTED_STRING_TYPES
