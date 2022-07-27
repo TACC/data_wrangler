@@ -1,7 +1,18 @@
 def choices_to_dict(choices_str: str) -> dict:
     # Utility adapted from code written by M. Vaughn at TACC to parse a REDCap metadata dictionary to generate table schemas and python framework for REDCap
     # instrument table creation within a database. This code has multiple dependencies and is under development. 
-    # 
+    #
+    # REDCap data are all exported as strings that require parsing and datatype reclassification to be useful. REDCap "field_types" are as follows: 
+    #   "text" and "notes" are stored as strings
+    #   "descriptive" does not directly associate to a data entry and can generally be ignored
+    #   "yesno" and "truefalse" are boolean, but may need to be typed as string if data is not consistently defined
+    #   "radio" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer. 
+    #   "dropdown" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer.
+    #   "checkbox" 
+    #   "calc"
+    #   "slider"
+    #   "file"
+    #
     # REDcap multi-checkbox choices within a CSV may be expressed as pipe-delimited sets of comma-delim values 
     # or as separate variables containing a triple underscore and enumeration (for example, "___1")
     #
@@ -11,6 +22,8 @@ def choices_to_dict(choices_str: str) -> dict:
     # Example: 1, Yes | 0, No
     # Example: 0, 0 | .25, 0.25 | .5, 0.5 | 1, 1 | 2, 2 | 4, 4 | 8, 8
     # Example: 1, Clinic | 2, Hospital | 3, Specialist
+    #
+    # The FOR loop below splits each string containing raw and labeled data into separate answers and strips the pipe and comma separators. 
     cdict = {}
     for i in choices_str.split("|"):
         i = i.strip()
