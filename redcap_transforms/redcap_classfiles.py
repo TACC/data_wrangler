@@ -12,11 +12,8 @@ def choices_to_dict(choices_str: str) -> dict:
 #       or as separate variables containing a triple underscore and enumeration (for example, "___1"). Storing multiselect answers as separate variables has generally
 #       been the preferred approach for supporting data analysis.
 #   "calc" is a formula used to auto-calculate answers based on other fields within the REDCap project. The exported answers could be almost any datatype based on the logic. 
-#   "slider"
-#   "file"
-#
-# REDcap multi-checkbox choices within a CSV may be expressed as pipe-delimited sets of comma-delim values 
-# or as separate variables containing a triple underscore and enumeration (for example, "___1")
+#   "slider" provides a single answer (integer) on a scale of a defined range and slider position. A common range used is 0-100.
+#   "file" can be stored as a string or URL
 #
 # Used to populate dropdown, checkbox, or slider type
 # Generated classes are camelcase; tables are snakecase.
@@ -35,7 +32,6 @@ for i in choices_str.split("|"):
         v = ii[1].strip()
         cdict[k] = v
 return cdict
-
 
 def choices_are_integer(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
@@ -73,7 +69,7 @@ def choices_are_boolean(choices_str: str) -> bool:
             return False
     return True
 
-
+# Have we tested this? Both yesno and truefalse REDCap field types are supposed to rendor "1" or "0" as answers.
 def choices_are_yesno(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
     values = []
@@ -87,6 +83,18 @@ def choices_are_yesno(choices_str: str) -> bool:
     return True
 
 
+def choices_are_truefalse(choices_str: str) -> bool:
+    cdict = choices_to_dict(choices_str)
+    values = []
+    for k, _ in cdict.items():
+        values.append(k)
+    if len(values) != 2:
+        return False
+    for v in values:
+        if v not in ["1", "0"]:
+            return False
+    return True
+
 def process_data_dict(filename: str, current: dict = None) -> dict:
     """Convert a REDcap Data Dictionary into a minimally processed, actionable Python dict"""
     # {form_name: { field_name: {}}}
@@ -95,6 +103,10 @@ def process_data_dict(filename: str, current: dict = None) -> dict:
     else:
         ddict = current
 
+# Though not currently in use by A2CPS, we should expand the processing below to include: 
+#   text_validation, text_validation_min, text_vaidation_max, branching_logic, required, and field_annotation as these entries, when used,
+#   can translate directly into required fields and ranges for the data schema.   
+        
     with open(filename, "r") as csvfile:
         ddreader = csv.reader(csvfile)
         # Strip header
