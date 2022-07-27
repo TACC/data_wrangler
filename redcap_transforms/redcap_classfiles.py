@@ -1,38 +1,40 @@
 def choices_to_dict(choices_str: str) -> dict:
-    # Utility adapted from code written by M. Vaughn at TACC to parse a REDCap metadata dictionary to generate table schemas and python framework for REDCap
-    # instrument table creation within a database. This code has multiple dependencies and is under development. 
-    #
-    # REDCap data are all exported as strings that require parsing and datatype reclassification to be useful. REDCap "field_types" are as follows: 
-    #   "text" and "notes" are stored as strings
-    #   "descriptive" does not directly associate to a data entry and can generally be ignored
-    #   "yesno" and "truefalse" are boolean, but may need to be typed as string if data is not consistently defined
-    #   "radio" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer. 
-    #   "dropdown" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer.
-    #   "checkbox" 
-    #   "calc"
-    #   "slider"
-    #   "file"
-    #
-    # REDcap multi-checkbox choices within a CSV may be expressed as pipe-delimited sets of comma-delim values 
-    # or as separate variables containing a triple underscore and enumeration (for example, "___1")
-    #
-    # Used to populate dropdown, checkbox, or slider type
-    # Generated classes are camelcase; tables are snakecase.
-    #
-    # Example: 1, Yes | 0, No
-    # Example: 0, 0 | .25, 0.25 | .5, 0.5 | 1, 1 | 2, 2 | 4, 4 | 8, 8
-    # Example: 1, Clinic | 2, Hospital | 3, Specialist
-    #
-    # The FOR loop below splits each string containing raw and labeled data into separate answers and strips the pipe and comma separators. 
-    cdict = {}
-    for i in choices_str.split("|"):
-        i = i.strip()
-        ii = i.split(",")
-        if len(ii) > 1:
-            k = ii[0].strip()
-            v = ii[1].strip()
-            cdict[k] = v
-    return cdict
+# Utility adapted from code written by M. Vaughn at TACC to parse a REDCap metadata dictionary to generate table schemas and python framework for REDCap
+# instrument table creation within a database. This code has multiple dependencies and is under development. 
+#
+# REDCap data are all exported as strings that require parsing and datatype reclassification to be useful. REDCap "field_types" are as follows: 
+#   "text" and "notes" are stored as strings
+#   "descriptive" does not directly associate to a data entry and can generally be ignored
+#   "yesno" and "truefalse" are boolean, but may need to be typed as string if data is not consistently defined
+#   "radio" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer.  
+#   "dropdown" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer.
+#   "checkbox" can be multiple answers expressed as pipe-delimited sets of comma-delimited values. REDCap data can be exported/stored in this format 
+#       or as separate variables containing a triple underscore and enumeration (for example, "___1"). Storing multiselect answers as separate variables has generally
+#       been the preferred approach for supporting data analysis.
+#   "calc" is a formula used to auto-calculate answers based on other fields within the REDCap project. The exported answers could be almost any datatype based on the logic. 
+#   "slider"
+#   "file"
+#
+# REDcap multi-checkbox choices within a CSV may be expressed as pipe-delimited sets of comma-delim values 
+# or as separate variables containing a triple underscore and enumeration (for example, "___1")
+#
+# Used to populate dropdown, checkbox, or slider type
+# Generated classes are camelcase; tables are snakecase.
+#
+# Example: 1, Yes | 0, No
+# Example: 0, 0 | .25, 0.25 | .5, 0.5 | 1, 1 | 2, 2 | 4, 4 | 8, 8
+# Example: 1, Clinic | 2, Hospital | 3, Specialist
+#
+# The FOR loop below splits each string containing raw and labeled data into separate answers and strips the pipe and comma separators. 
+cdict = {}
+for i in choices_str.split("|"):
+    i = i.strip()
+    ii = i.split(",")
+    if len(ii) > 1:
+        k = ii[0].strip()
+        v = ii[1].strip()
+        cdict[k] = v
+return cdict
 
 
 def choices_are_integer(choices_str: str) -> bool:
