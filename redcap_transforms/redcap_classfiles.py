@@ -1,6 +1,9 @@
 def choices_to_dict(choices_str: str) -> dict:
-# Utility adapted from code written by M. Vaughn at TACC to parse a REDCap metadata dictionary to generate table schemas and python framework for REDCap
-# instrument table creation within a database. This code has multiple dependencies and is under development. 
+# Utility adapted/extended from code written by M. Vaughn at TACC to parse a REDCap metadata dictionary to generate table schemas and python framework within a database 
+# for storing REDCap instrument data. The original code supported a subset of REDCap "field types" and did not utilize other fields present in the REDCap data definitions to
+# to specify datatypes (such as integer, numeric, datetime formats), required fields, or valid range. Extensions to this code are intended to leverage this information
+# when present in the data dictionary. This code also supports creating a single set of table schemas from a merged set of REDCap projects with variables added to filter
+# tables by project, organization, and other useful criteria. This code is currently under development. 
 #
 # REDCap data are all exported as strings that require parsing and datatype reclassification to be useful. REDCap "field_types" are as follows: 
 #   "text" and "notes" are stored as strings
