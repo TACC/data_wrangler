@@ -2,13 +2,14 @@ def choices_to_dict(choices_str: str) -> dict:
 # Utility adapted/extended from code written by M. Vaughn at TACC to parse a REDCap metadata dictionary to generate table schemas and python framework within a database 
 # for storing REDCap instrument data. The original code supported a subset of REDCap "field types" and did not utilize other fields present in the REDCap data definitions to
 # to specify datatypes (such as integer, numeric, datetime formats), required fields, or valid range. Extensions to this code are intended to leverage this information
-# when present in the data dictionary. This code also supports creating a single set of table schemas from a merged set of REDCap projects with variables added to filter
+# when present in the data dictionary. "Required" and text validation ranges are not enforced by REDCap so will be captured as information but not used to define the table schema.
+# This code also supports creating a single set of table schemas from a merged set of REDCap projects with variables added to filter
 # tables by project, organization, and other useful criteria. This code is currently under development. 
 #
 # REDCap data are all exported as strings that require parsing and datatype reclassification to be useful. REDCap "field_types" are as follows: 
 #   "text" and "notes" are stored as strings
 #   "descriptive" does not directly associate to a data entry and can generally be ignored
-#   "yesno" and "truefalse" are boolean, but may need to be typed as string if data is not consistently defined
+#   "yesno" and "truefalse" are boolean, but may need to be typed as string if data is not consistent
 #   "radio" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer.  
 #   "dropdown" is a single answer formatted as an integer (raw data ennumeration), comma separator, and label. Raw data exports will only contain the integer associated with the answer.
 #   "checkbox" can be multiple answers expressed as pipe-delimited sets of comma-delimited values. REDCap data can be exported/stored in this format 
@@ -36,6 +37,7 @@ for i in choices_str.split("|"):
         cdict[k] = v
 return cdict
 
+# Testing choices to determine if it is an integer is more straightforward than checking for "integer" in text_validation.
 def choices_are_integer(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
     for k, _ in cdict.items():
@@ -45,7 +47,7 @@ def choices_are_integer(choices_str: str) -> bool:
             return False
     return True
 
-
+# Testing choices to determine if it is a numeric is more straightforward than checking for "number" in text_validation.
 def choices_are_numeric(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
     for k, _ in cdict.items():
@@ -55,7 +57,7 @@ def choices_are_numeric(choices_str: str) -> bool:
             return False
     return True
 
-
+# This case should cover truefalse field_type
 def choices_are_boolean(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
     values = []
@@ -85,7 +87,7 @@ def choices_are_yesno(choices_str: str) -> bool:
             return False
     return True
 
-# Added truefalse field handling; should be same as yesno field type.
+# Added truefalse field handling just in case it is NOT handled by the boolean case above.
 def choices_are_truefalse(choices_str: str) -> bool:
     cdict = choices_to_dict(choices_str)
     values = []
