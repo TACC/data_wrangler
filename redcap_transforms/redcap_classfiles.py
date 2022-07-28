@@ -108,7 +108,7 @@ def process_data_dict(filename: str, current: dict = None) -> dict:
     else:
         ddict = current
 
-# Though lightly used by some REDCap projects, we should expand the code below to include: 
+# Though lightly used by some REDCap projects, we should expand the code below to capture: 
 #   text_validation, text_validation_min, text_vaidation_max, branching_logic, required, and field_annotation as these entries, when used,
 #   can translate directly into datatypes, required fields and ranges for the data schema.   
         
