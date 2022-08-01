@@ -19,6 +19,9 @@ def choices_to_dict(choices_str: str) -> dict:
 #   "slider" provides a single answer (integer) on a scale of a defined range and slider position. A common range used is 0-100.
 #   "file" can be stored as a string or URL
 #
+# The original code only handles a single checkbox selection. If field_type = "checkbox" AND choices contain a pipe separator indicating multiple checkboxes are present,
+# create a separate variable for each choice as "[field_name]___[choice integer]". An example of multi-select checkboxes is early_withdrawal_v04.ewdisreasons.
+#
 # Used to populate dropdown, checkbox, or slider type
 # Generated classes are camelcase; tables are snakecase.
 #
