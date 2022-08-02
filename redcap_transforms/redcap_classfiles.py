@@ -284,7 +284,7 @@ def build(args):
 
 # The following REDCap common fields should be added to each REDCap instrument table within the VBR: persistent_id (subject guid), project_id (REDCap project_id "pid"), 
 # organization_id (REDCap "dag"), protocol_id (maps to REDCap event_name), creation_time, last_updated_ts, language 
-# Should these common variables be added via the Jinja template or do they need to be coded below? 
+# These were once included in class RcapTable but may have been refactored or omitted. Should these common variables now be added via the Jinja template or somewhere else? 
             
         # Render and write the class file from Jinja template
         with open(os.path.join(TEMPLATES_DIR, CLASS_TEMPLATE)) as tf:
