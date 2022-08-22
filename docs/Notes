@@ -1,21 +1,24 @@
 REDCap Export:
 Automates the export of metadata, REDCap instrument reports, records that have been added/deleted/changed within a specified timeframe and project data via the REDCap API. 
 The code must support the ETL of multiple instruments from multiple REDCap projects into common tables. 
-For each project, I (data administrator) want to select all or a subset of the reports and project data to export to a secure directory at a specified day and time.
-I also want the ability to select all or a subset of the reports and project data to export to a secure directory on demand.
-I'd like to be notified when the job completes or if an issue occurs preventing job completion.
-I want the application to reestablish a connection and reissue the incomplete job based on the return code so that the full ETL can be run successfully unattended.  
+For each project, the data_admin wants to select all or a subset of the reports and project data to export to a secure directory at a specified day and time.
+The data_admin also wants the ability to select all or a subset of the reports and project data to export to a secure directory on demand.
+The data_admin wants to be notified when the job completes or if an issue occurs preventing job completion.
+The export application needs ability to reestablish a connection and reissue the incomplete job based on the return code so that the full ETL can be run successfully
+unattended.
 
 Test:
 1) Initial validation of connections, permissions and existence of the specified project and reports.
 2) Access to create a new directory within the secure storage where the exports will be stored.
 
 REDCap Raw Data Transforms (CSVs):
-1) If [instrument]_complete=0 AND a select set of fields contain data, set [instrument]_complete=1
-2) If a date/time field contains annotation other than a timestamp, set the field to blank and set [instrument]_complete=1.
-3) If a field contains illegal formatting tags which could misalign the records, strip them.
-4) If [instrument]_complete=NULL OR [instrument]_complete=0 (after handling transform step 1 and 2), delete the record.
-5) Transform REDCap raw field_ids to target variable names.
+1) Strip CRLFs and formatting tagsrip them.
+2) If [instrument]_complete=NULL, delete the record
+3) If [instrument]_complete=0 AND a select set of fields contain data, set [instrument]_complete=1 ELSE delete the record.
+4) If a date/time field contains annotation other than a timestamp, set the field to blank and set [instrument]_complete=1.
+5) Transform REDCap raw field_ids to target variable names. Note that the export is formatted to expand multicheckboxes into separate variables.
+
+At this point, the transformed CSV can be loaded into the corresponding table within the DW. 
 6) Set project_id to REDCap project_id (or the designated FK project_id within the project table).
 7) Set last_updated_ts to REDCap export timestamp (can be parsed from the REDCap exported file name).
 8) If language other than "en", insert value into language variable.
@@ -26,5 +29,8 @@ REDCap has a data dictionary for every project which can be exported in multiple
 and field names and their labels. It also contains the datatypes, calculations and quality control rules. The REDCap metadata export can be used to construct the table
 schemas for housing REDCap instrument data and provide a single location source for labeling views. Comparing a current metadata file against an existing one provides a
 mechanism for checking compatibility across datasets. 
+
+Use a table to map the REDCap metadata projects/instruments/field names to DW tables/variable names. The mapping table can be leveraged to display the labels
+and to potentially autogenerate stata .do files and other formatted output. 
 
   
