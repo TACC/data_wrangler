@@ -11,26 +11,33 @@ Test:
 1) Initial validation of connections, permissions and existence of the specified project and reports.
 2) Access to create a new directory within the secure storage where the exports will be stored.
 
-REDCap Raw Data Transforms (CSVs):
-1) Strip CRLFs and formatting tagsrip them.
+REDCap Raw Data Transforms (CSVs)...For each exported CSV,
+1) Strip CRLFs and formatting tags
 2) If [instrument]_complete=NULL, delete the record
 3) If [instrument]_complete=0 AND a select set of fields contain data, set [instrument]_complete=1 ELSE delete the record.
 4) If a date/time field contains annotation other than a timestamp, set the field to blank and set [instrument]_complete=1.
-5) Transform REDCap raw field_ids to target variable names. Note that the export is formatted to expand multicheckboxes into separate variables.
+5) Transform REDCap raw field_ids to target variable names. 
 
-At this point, the transformed CSV can be loaded into the corresponding table within the DW. 
-6) Set project_id to REDCap project_id (or the designated FK project_id within the project table).
-7) Set last_updated_ts to REDCap export timestamp (can be parsed from the REDCap exported file name).
-8) If language other than "en", insert value into language variable.
+Steps 1, 4 & 5 must be done before loading data into the DW; 2 & 3 could be handled after the load. 
+The report exports are formatted to expand multi-checkboxes into separate variables. The rcap_field_variable_map.csv and corresponding DW table were generated
+using the REDCap exportFieldNames API method to export the CSV and adding a dw_variable_name column to provide the substituted variable name.
+This table also provides the mapping for merged tables and interpretting labels and field attributes from the meta table. 
+
+At this point, records associated with the previously imported data (same project/instrument/language) may be dropped, 
+and the transformed CSV can be loaded into the corresponding table within the DW. 
+6) Set project_id to the REDCap project_id (or the designated FK project_id within the project table).
+7) Set last_updated_ts to the REDCap export timestamp (can be parsed from the REDCap exported file name).
+8) If language other than "en", insert value (such as "sp") into the language variable.
 
 Leveraging REDCap Metadata (aka Data Dictionary) for Schema Definition, Labels and Data Quality 
 
-REDCap has a data dictionary for every project which can be exported in multiple formats including CSV and JSON. The resulting metadata export contains the raw instrument
-and field names and their labels. It also contains the datatypes, calculations and quality control rules. The REDCap metadata export can be used to construct the table
-schemas for housing REDCap instrument data and provide a single location source for labeling views. Comparing a current metadata file against an existing one provides a
-mechanism for checking compatibility across datasets. 
+REDCap has a data dictionary for every project which can be exported in multiple formats including CSV and JSON. 
+The resulting metadata export contains the raw instrument and field names and their labels.
+It also contains the datatypes, calculations and quality control rules. The REDCap metadata export can be used to construct the table schemas 
+for housing REDCap instrument data and provides a single location source for labeling views. Comparing a current metadata file against an existing one 
+provides a mechanism for checking compatibility across datasets. 
 
-Use a table to map the REDCap metadata projects/instruments/field names to DW tables/variable names. The mapping table can be leveraged to display the labels
-and to potentially autogenerate stata .do files and other formatted output. 
+The rcap_field_variable_map.csv table maps the REDCap metadata projects/instruments/field names to DW tables/variable names. The mapping and meta tables
+can be leveraged to display the labels and to potentially autogenerate stata .do files and other formatted output. 
 
   
