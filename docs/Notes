@@ -9,7 +9,8 @@ unattended.
 
 Test:
 1) Initial validation of connections, permissions and existence of the specified project and reports.
-2) Access to create a new directory within the secure storage where the exports will be stored.
+2) Successful completion of each REDCap API request: return code = 200 and export is anticipated format, length and size 
+3) Access to create a new directory within the secure storage where the exports will be stored.
 
 REDCap Raw Data Transforms (CSVs)...For each exported CSV,
 1) Strip CRLFs and formatting tags
