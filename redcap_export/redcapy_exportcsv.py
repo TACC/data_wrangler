@@ -247,7 +247,7 @@ class Redcapy_exportcsv:
 
             Note that the format for returned data is the format field, not the returnFormat field.
 
-            Example of returned content:
+            Example of returned content (JSON):
                 [{"event_name":"Baseline","arm_num":"2","day_offset":"0","offset_min":"0",
                 "offset_max":"0", "unique_event_name":"baseline_arm_2","custom_event_label":null}]
 
@@ -437,9 +437,123 @@ class Redcapy_exportcsv:
             post_data=post_data, limit=limit, wait_secs=wait_secs
         )
 
-   
+ def export_field_names(self, limit=3, wait_secs=3, **kwargs):
+        """
+            Export_field_names provides the list of field names (including checkbox variables) which can be compared more easily than the metadata
+            files to determine if any changes to the data schema have been made. This table can also serve as the basis for mapping variable names between
+            REDCap and target database tables.
+            Any changes to the POST data will be passed entirely to core_api_code method to
+                replace the default POST options.
+            Note that the format for returned data is the format field, not the returnFormat field.
+            :param limit: int, >= 1, max number of recursive attempts
+            :param wait_secs: int, >= 0, number of secs to wait between API calls
+            :param kwargs: Available options (check post_data for defaults)
+                token: {your token}
+                content: exportFieldNames
+                format: json/csv
+                OPTIONAL
+                --------
+                returnFormat: json/csv
+            :return: object in specified format (json or csv) containing either the expected output or an error message from
+                    __core_api_code__ method
+        """
 
+        checked_args = self._check_args(limit=limit, wait_secs=wait_secs)
+        limit = checked_args.limit
+        wait_secs = checked_args.wait_secs
+
+        post_data = {
+            "token": self._redcap_token,
+            "content": "exportFieldNames",
+            "format": "csv",
+            "returnFormat": "csv",
+        }
+
+        if kwargs is not None:
+            for key, value in kwargs.items():
+                if (
+                    key
+                    in ["token", "content", "format", "returnFormat"]
+                    + self.retry_keys
+                ):
+                    post_data[key] = kwargs[key]
+                else:
+                    print("{} is not a valid key".format(key))
+
+        return self._core_api_code(
+            post_data=post_data, limit=limit, wait_secs=wait_secs
+        )   
+
+ def export_reports(self, limit=3, wait_secs=3, **kwargs):
+        """
+            Export_reports allows flexibility to build and preview reports within REDCap using advanced filters, and then export the resulting data.
+            One caveat is that while the report data updates dynamically, fields that are added to an instrument after defining the report
+            will not be included. New fields will be displayed as unchecked within the REDCap report definition. Make changes to the 
+            report by selecting the fieldnames and saving the report changes. These changes must also be made within the schema for the target table.   
+            
+            Any changes to the POST data will be passed entirely to core_api_code method to replace the default POST options.
+            Note that the format for returned data is the format field, not the returnFormat field.
+            :param limit: int, >= 1, max number of recursive attempts
+            :param wait_secs: int, >= 0, number of secs to wait between API calls
+            :param kwargs: Available options (check post_data for defaults)
+                token: {your token}
+                content: exportFieldNames
+                format: json/csv
+                report_id: [a # associated with each report, displayed in top right of the REDCap report definition page]
+                csvDelimiter:'' (default for CSV or another delimiter may be substituted)
+                rawOrLabel: raw/label
+                rawOrLabelHeaders: raw/label
+                exportCheckboxLabel: true/false
+                OPTIONAL
+                --------
+                returnFormat: json/csv
+            :return: object in specified format (json or csv) containing either the expected output or an error message from
+                    __core_api_code__ method
+                    
+            TODO: replace static report_id with list of reports to be exported.
+        """
+
+        checked_args = self._check_args(limit=limit, wait_secs=wait_secs)
+        limit = checked_args.limit
+        wait_secs = checked_args.wait_secs
+
+        post_data = {
+            "token": self._redcap_token,
+            "content": "report",
+            "format": "csv",
+            "report_id":"4792",
+            'csvDelimiter': '',
+            'rawOrLabel': 'raw',
+            'rawOrLabelHeaders': 'raw',
+            'exportCheckboxLabel': 'false',
+            "returnFormat": "csv",
+        }
+
+        if kwargs is not None:
+            for key, value in kwargs.items():
+                if (
+                    key
+                    in ["token", "content", "format", "returnFormat"]
+                    + self.retry_keys
+                ):
+                    post_data[key] = kwargs[key]
+                else:
+                    print("{} is not a valid key".format(key))
+
+        return self._core_api_code(
+            post_data=post_data, limit=limit, wait_secs=wait_secs
+        )   
+    
+    
+    
+    
+    
+    
+    
+    
+    
 if __name__ == "__main__":
+    
     """
         Sample usage below using command line args for Redcap tokens.
     """
