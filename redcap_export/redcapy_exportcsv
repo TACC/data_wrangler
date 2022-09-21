@@ -1,8 +1,10 @@
 """
     Redcapy_exportcsv.py interacts with Redcap v12.0 API export methods.  Tested with Python 3.x.
-
-    Note that the methods using self._core_api_code may return False to other instance methods
-    in the event of a connection failure, in lieu of an expected response.
+    Based on Redcapy.py utilities developed by Bill Santos for UCSF and employed by him for managing REDCap projects through 2022 and REDCap v9.x.
+    Includes backoff and throttling parameters to address REDCap load and timeout issues.
+    Extended to include methods for exporting reports and other REDCap files formated as CSVs. 
+    
+    Note that the methods using self._core_api_code may return False to other instance methods in the event of a connection failure, in lieu of an expected response.
 """
 
 import attr
@@ -12,7 +14,7 @@ import re
 import requests
 import time
 
-#from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup (Chiefly used for testing/validating formats for importing into REDCap.) 
 from collections import namedtuple
 from functools import wraps
 from validator_collection import checkers
