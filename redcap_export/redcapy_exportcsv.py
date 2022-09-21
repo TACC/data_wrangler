@@ -254,11 +254,11 @@ class Redcapy_exportcsv:
         :param kwargs:
             token: {your token}
             content: event
-            format: json/csv/xml
+            format: json/csv
             arms: a comma separated string of arm numbers that you wish to pull events for (Default = all arms)
-            returnFormat: json/csv/xml
+            returnFormat: json/csv
 
-        :return: JSON object containing either the expected output or an error message from __core_api_code__ method
+        :return: object in specified format (json or csv) containing either the expected output or an error message from __core_api_code__ method
         """
 
         checked_args = self._check_args(limit=limit, wait_secs=wait_secs)
@@ -268,8 +268,8 @@ class Redcapy_exportcsv:
         post_data = {
             "token": self._redcap_token,
             "content": "event",
-            "format": "json",
-            "returnFormat": "json",
+            "format": "csv",
+            "returnFormat": "csv",
         }
 
         if kwargs is not None:
@@ -300,15 +300,15 @@ class Redcapy_exportcsv:
             :param kwargs: Available options (check post_data for defaults)
                 token: {your token}
                 content: metadata
-                format: json/csv/xml
+                format: json/csv
 
                 OPTIONAL
                 --------
                 fields: string (Comma separated if multiple)
                 forms: string (Comma separated if multiple)
-                returnFormat: json/csv/xml
+                returnFormat: json/csv
 
-            :return: JSON object containing either the expected output or an error message from
+            :return: object in specified format (json or csv) containing either the expected output or an error message from
                     __core_api_code__ method
         """
 
@@ -319,8 +319,8 @@ class Redcapy_exportcsv:
         post_data = {
             "token": self._redcap_token,
             "content": "metadata",
-            "format": "json",
-            "returnFormat": "json",
+            "format": "csv",
+            "returnFormat": "csv",
         }
 
         if kwargs is not None:
@@ -329,112 +329,6 @@ class Redcapy_exportcsv:
                     key
                     in ["token", "content", "format", "fields", "forms", "returnFormat"]
                     + self.retry_keys
-                ):
-                    post_data[key] = kwargs[key]
-                else:
-                    print("{} is not a valid key".format(key))
-
-        return self._core_api_code(
-            post_data=post_data, limit=limit, wait_secs=wait_secs
-        )
-
-    def export_survey_link(
-        self, instrument, event, record, limit=3, wait_secs=3, **kwargs
-    ):
-        """
-            Export a survey link to a single survey based on required arguments.
-
-            Any changes to the POST data will be passed entirely to core_api_code method to
-                replace the default POST options.
-            Note that the format for returned data is the format field, not the returnFormat field.
-
-            :param instrument: Redcap instrument name
-            :param event: Redcap event name
-            :param record: record_id
-            :param limit: int, >= 1, max number of recursive attempts
-            :param wait_secs: int, >= 0, number of secs to wait between API calls
-            :param kwargs: Available options (check post_data for defaults)
-                token: {your instance token}
-                content: 'surveyLink' appears to be the only valid option
-                format: json/csv/xml CSV and XML not yet implemented
-                returnFormat: json/csv/xml CSV and XML not yet implemented
-
-            :return: JSON object containing either the expected output or an error message from
-                    __core_api_code__ method
-        """
-
-        checked_args = self._check_args(limit=limit, wait_secs=wait_secs)
-        limit = checked_args.limit
-        wait_secs = checked_args.wait_secs
-
-        post_data = {
-            "token": self._redcap_token,
-            "content": "surveyLink",
-            "format": "json",
-            "instrument": instrument,
-            "event": event,
-            "record": record,
-            "returnFormat": "json",
-        }
-
-        if kwargs is not None:
-            for key, value in kwargs.items():
-                if (
-                    key
-                    in ["token", "content", "format", "returnFormat"] + self.retry_keys
-                ):
-                    post_data[key] = kwargs[key]
-                else:
-                    print("{} is not a valid key".format(key))
-
-        return_value = self._core_api_code(
-            post_data=post_data, limit=limit, wait_secs=wait_secs
-        )
-
-        return return_value if return_value else ""
-
-    def export_survey_participants(
-        self, instrument, event, limit=3, wait_secs=3, **kwargs
-    ):
-        """
-            Export full list of surveys for a combination of instrument and event
-
-            Any changes to the POST data will be passed entirely to core_api_code method to
-                replace the default POST options.
-            Note that the format for returned data is the format field, not the returnFormat field.
-
-            :param instrument: Redcap instrument name
-            :param event: Redcap event name
-            :param limit: int, >= 1, max number of recursive attempts
-            :param wait_secs: int, >= 0, number of secs to wait between API calls
-            :param kwargs: Available options (check post_data for defaults)
-                token: {your instance token}
-                content: metadata
-                format: json/csv/xml
-                returnFormat: json/csv/xml
-
-            :return: JSON object containing either the expected output or an error message from
-                    __core_api_code__ method
-        """
-
-        checked_args = self._check_args(limit=limit, wait_secs=wait_secs)
-        limit = checked_args.limit
-        wait_secs = checked_args.wait_secs
-
-        post_data = {
-            "token": self._redcap_token,
-            "content": "participantList",
-            "format": "json",
-            "instrument": instrument,
-            "event": event,
-            "returnFormat": "json",
-        }
-
-        if kwargs is not None:
-            for key, value in kwargs.items():
-                if (
-                    key
-                    in ["token", "content", "format", "returnFormat"] + self.retry_keys
                 ):
                     post_data[key] = kwargs[key]
                 else:
@@ -454,12 +348,12 @@ class Redcapy_exportcsv:
                 replace the default POST options.
             Note that the format for returned data is the format field, not the returnFormat field.
 
-            Example usage:
+            Example usage: Export all records that have been added or changed since last export (dateRangeBegin) 
                 from redcap.redcapy import Redcapy
                 redcap_token = os.environ['your project token string']
                 redcap_url = os.environ['redcap server url']
                 rc = Redcapy(api_token=redcap_token, redcap_url=redcap_url)
-                data_export = rc.export_records(rawOrLabel='label',
+                data_export = rc.export_records(rawOrLabel='raw',
                                     fields='consent_date, randomization_id, record_id')
 
             :param limit: int, >= 1, max number of recursive attempts
@@ -467,19 +361,24 @@ class Redcapy_exportcsv:
             :param kwargs: Available options
                 token: {your token}
                 content: record
+                action: export
                 format: json/csv/xml
                 type: flat/eav
+                csvDelimiter: '' or other delimiter
                 rawOrLabel: raw/label
                 rawOrLabelHeaders: raw/label
                 exportCheckboxLabel: false/true
                 exportSurveyFields: false/true
                 exportDataAccessGroups: false/true
                 returnFormat: json/csv/xml
+                dateRangeBegin: yyyy-mm-dd hh:mm:ss
+                dateRangeEnd: defaults to current datetime
+                exportBlankForGrayFormStatus: false/true
                 fields: string (Comma separated as a single string, not list, if multiple)
                 forms: string (Comma separated as a single string, not list, if multiple)
                 events: string (Comma separated as a single string, not list, if multiple)
 
-            :return JSON object containing either the expected output or an error message from
+            :return object in specified format (json or csv) containing either the expected output or an error message from
                     __core_api_code__ method, or False if self._core_api_code fails
         """
 
@@ -488,18 +387,21 @@ class Redcapy_exportcsv:
         wait_secs = checked_args.wait_secs
 
         # TODO Add handling of record filter, in the form of record[0], record[1], etc.
-        # TODO Add more defaults to method parameter list
+        # TODO Add way to set dateRangeBegin to time of the last export (or current minus one week)
         post_data = {
             "token": self._redcap_token,
             "content": "record",
-            "format": "json",
+            "format": "csv",
             "type": "flat",
+            "csvDelimiter": '',
             "rawOrLabel": "raw",
             "rawOrLabelHeaders": "raw",
             "exportCheckboxLabel": "false",
-            "exportSurveyFields": "false",
-            "exportDataAccessGroups": "false",
-            "returnFormat": "json",
+            "exportSurveyFields": "true",
+            "exportDataAccessGroups": "true",
+            "returnFormat": "csv",
+            "dateRangeBegin":"",
+            "exportBlankForGrayFormStatus": "true"
         }
 
         if kwargs is not None:
@@ -521,6 +423,9 @@ class Redcapy_exportcsv:
                         "exportSurveyFields",
                         "exportDataAccessGroups",
                         "returnFormat",
+                        "dateRangeBegin",
+                        "dateRangeEnd",
+                        "exportBlankForGrayFormStatus"
                     ]
                     + self.retry_keys
                 ):
